@@ -74,7 +74,12 @@ async def create_task(
     db.add(task)
     await db.flush()
     activity = await log_activity(
-        db, project_id=project_id, actor_id=created_by.id, event_type="task.created", task_id=task.id
+        db, 
+        project_id=project_id, 
+        actor_id=created_by.id, 
+        event_type="task.created", 
+        task_id=task.id,
+        metadata={"title": task.title}
     )
     await db.commit()
     task = await _load_task(db, task.id, project_id)
@@ -191,13 +196,16 @@ async def update_task(
 
     if new_status is not None and new_status != old_status:
         event_type = "task.moved"
+        metadata = {"title": task.title, "new_status": new_status.value}
     elif new_assignee_id is not ... and new_assignee_id != old_assignee:
         event_type = "task.assigned"
+        metadata = {"title": task.title, "assignee_id": str(new_assignee_id) if new_assignee_id else None}
     else:
         event_type = "task.updated"
+        metadata = {"title": task.title}
 
     activity = await log_activity(
-        db, project_id=project_id, actor_id=actor.id, event_type=event_type, task_id=task.id
+        db, project_id=project_id, actor_id=actor.id, event_type=event_type, task_id=task.id, metadata=metadata
     )
     await db.commit()
     task = await _load_task(db, task.id, project_id)
@@ -218,7 +226,7 @@ async def delete_task(
     task_id = task.id
     await db.delete(task)
     activity = await log_activity(
-        db, project_id=project_id, actor_id=actor_id, event_type="task.deleted", task_id=task_id
+        db, project_id=project_id, actor_id=actor_id, event_type="task.deleted", task_id=task_id, metadata={"title": task.title}
     )
     await db.commit()
     await broadcast_to_project(

@@ -73,7 +73,7 @@ async def invite_member(
         project_id=project_id,
         actor_id=actor_id,
         event_type="member.invited",
-        metadata={"user_id": str(user.id), "email": user.email},
+        metadata={"user_id": str(user.id), "email": user.email, "user_name": user.name},
     )
 
     # Snapshot member IDs (including the new member) BEFORE commit so we

@@ -31,11 +31,11 @@ function formatEvent(item: ActivityItem): string {
   const meta = item.event_metadata as Record<string, string>;
   if (e === "task.created") return `created task "${meta.title || "unknown"}"`;
   if (e === "task.updated") return `updated task "${meta.title || "unknown"}"`;
-  if (e === "task.moved") return `moved task to ${meta.new_status || ""}`;
+  if (e === "task.moved") return `moved task to ${(meta.new_status || "").replace("_", " ")}`;
   if (e === "task.assigned") return `assigned a task`;
   if (e === "task.deleted") return `deleted a task`;
   if (e === "comment.added") return `commented on a task`;
-  if (e === "member.invited") return `invited a member`;
+  if (e === "member.invited") return `invited ${meta.user_name || meta.email || "a member"}`;
   if (e === "member.removed") return `removed a member`;
   return e;
 }

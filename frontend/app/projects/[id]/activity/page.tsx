@@ -26,13 +26,13 @@ interface Project {
 function formatEvent(item: ActivityItem): string {
   const e = item.event_type;
   const meta = item.event_metadata;
-  if (e === "task.created") return `created task "${meta.title || "a task"}"`;
-  if (e === "task.updated") return `updated task "${meta.title || "a task"}"`;
+  if (e === "task.created") return `created task "${meta.title || "unknown"}"`;
+  if (e === "task.updated") return `updated task "${meta.title || "unknown"}"`;
   if (e === "task.moved") return `moved task to ${(meta.new_status || "").replace("_", " ")}`;
   if (e === "task.assigned") return `changed task assignment`;
   if (e === "task.deleted") return `deleted a task`;
   if (e === "comment.added") return `added a comment`;
-  if (e === "member.invited") return `invited a new member`;
+  if (e === "member.invited") return `invited ${meta.user_name || meta.email || "a new member"}`;
   if (e === "member.removed") return `removed a member`;
   return e;
 }
